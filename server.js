@@ -14,6 +14,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+// export the express app for serverless environments (Vercel, etc.)
 const PORT = process.env.PORT || 5000;
 
 // Serve new multi-page index file at root
@@ -71,6 +72,12 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`🌱 The Plantry server is growing on port ${PORT}`);
-});
+// In a serverless environment (Vercel) `process.env.VERCEL` is defined.
+// Avoid calling listen there; export the app so the platform can use it.
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`🌱 The Plantry server is growing on port ${PORT}`);
+  });
+}
+
+export default app;
