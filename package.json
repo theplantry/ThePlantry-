@@ -1,0 +1,28 @@
+{
+  "name": "the-plantry",
+  "version": "1.0.0",
+  "description": "The Plantry - Plant-Based Sophistication with Order Management",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "seed": "node scripts/seed-db.js"
+  },
+  "keywords": ["plantry", "organic", "plant-based"],
+  "author": "The Plantry Team",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "pg": "^8.8.0",
+    "stripe": "^12.0.0",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.0",
+    "dotenv": "^16.0.3",
+    "cors": "^2.8.5",
+    "body-parser": "^1.20.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}

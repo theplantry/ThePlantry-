@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Plantry | Plant-Based Sophistication</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+    <!-- AOS - Animate On Scroll Library -->
+    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <style>
+        :root {
+            --stone-50: #f9f8f6;
+            --stone-900: #1c1917;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--stone-50);
+            color: var(--stone-900);
+            scroll-behavior: smooth;
+        }
+        .serif {
+            font-family: 'Playfair Display', serif;
+        }
+        .nav-link {
+            position: relative;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: -2px;
+            left: 0;
+            background-color: var(--stone-900);
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .hero-gradient {
+            background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.4));
+        }
+        .product-card img {
+            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .product-card:hover img {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Announcement Bar -->
+    <div class="w-full bg-stone-900 text-stone-50 py-2 text-center text-[10px] tracking-[0.2em] uppercase">
+        Fresh organic batches delivered every Tuesday & Friday
+    </div>
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-stone-50/80 backdrop-blur-md border-b border-stone-200">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="hidden md:flex space-x-8">
+                <a href="#shop" class="nav-link">Shop</a>
+                <a href="#about" class="nav-link">Our Story</a>
+            </div>
+            
+            <a href="/index.html" class="text-2xl tracking-[0.3em] uppercase serif font-medium">The Plantry</a>
+            
+            <div class="flex items-center space-x-6">
+                <a href="#locations" class="nav-link hidden md:block">Locations</a>
+                <button id="cart-button" class="relative" onclick="window.location.href='/cart.html'">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                    <span id="cart-count" class="absolute -top-2 -right-2 bg-stone-900 text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center">0</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative h-[85vh] flex items-center justify-center overflow-hidden">
+        <img src="https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&q=80&w=2000" 
+             alt="Fresh greens" 
+             class="absolute inset-0 w-full h-full object-cover">
+        <div class="absolute inset-0 hero-gradient"></div>
+        <div class="relative text-center text-white px-6" data-aos="fade-up" data-aos-duration="1000">
+            <h1 class="text-5xl md:text-7xl serif italic mb-6">Purely Planted.</h1>
+            <p class="text-sm md:text-base tracking-[0.15em] uppercase max-w-md mx-auto mb-10 opacity-90">
+                Small batch organic provisions for the conscious kitchen
+            </p>
+            <a href="#shop" class="inline-block border border-white px-10 py-4 text-[11px] tracking-[0.2em] uppercase hover:bg-white hover:text-stone-900 transition-colors duration-500">
+                Explore the Collection
+            </a>
+        </div>
+    </section>
+
+    <!-- Categories -->
+    <section id="shop" class="max-w-7xl mx-auto px-6 py-24">
+        <div class="flex flex-col md:flex-row justify-between items-end mb-16 space-y-4" data-aos="fade-up">
+            <div>
+                <h2 class="text-[10px] tracking-[0.3em] uppercase mb-4 text-stone-500">Daily Essentials</h2>
+                <h3 class="text-4xl serif">Current Offerings</h3>
+            </div>
+            <div class="flex space-x-6 text-[11px] uppercase tracking-widest text-stone-400">
+                <button class="category-filter text-stone-900 border-b border-stone-900 pb-1" data-category="all">All</button>
+                <button class="category-filter hover:text-stone-900 transition-colors" data-category="juices">Juices</button>
+                <button class="category-filter hover:text-stone-900 transition-colors" data-category="bowls">Bowls</button>
+                <button class="category-filter hover:text-stone-900 transition-colors" data-category="pantry">Pantry</button>
+            </div>
+        </div>
+
+        <div id="products-grid" class="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <!-- Products will be loaded here -->
+        </div>
+    </section>
+
+    <!-- Mission Branding -->
+    <section id="about" class="bg-stone-100 py-32 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
+            <div class="relative" data-aos="fade-right" data-aos-duration="1000">
+                <img src="https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?auto=format&fit=crop&q=80&w=1000" alt="Garden" class="w-full h-[600px] object-cover">
+                <div class="absolute -bottom-10 -right-10 bg-white p-12 hidden lg:block border border-stone-200">
+                    <p class="serif italic text-2xl text-stone-600">"Nature is the only luxury we truly need."</p>
+                </div>
+            </div>
+            <div class="space-y-8" data-aos="fade-left" data-aos-duration="1000">
+                <h2 class="text-[10px] tracking-[0.4em] uppercase text-stone-400">Our Philosophy</h2>
+                <h3 class="text-5xl serif leading-tight">High-Vibrational Food for Daily Life.</h3>
+                <p class="text-stone-600 leading-relaxed font-light">
+                    The Plantry was founded on the belief that what we consume should be as beautiful as it is nourishing. We source exclusively from biodynamic farms that respect the soil and the seasons. No additives, no shortcuts—just the raw power of plants.
+                </p>
+                <div class="pt-6">
+                    <a href="#" class="text-[11px] uppercase tracking-[0.2em] border-b border-stone-900 pb-2 hover:opacity-50 transition-opacity">Read the Full Manifesto</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Instagram/Social Look -->
+    <section class="py-24 max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16" data-aos="fade-up">
+            <h3 class="text-[10px] tracking-[0.3em] uppercase mb-4">Follow the Growth</h3>
+            <p class="serif text-3xl italic">@the.plantry</p>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            <div class="aspect-square bg-stone-200 overflow-hidden" data-aos="zoom-in"><img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"></div>
+            <div class="aspect-square bg-stone-200 overflow-hidden" data-aos="zoom-in" data-aos-delay="50"><img src="https://images.unsplash.com/photo-1505253716362-af9235d35be1?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"></div>
+            <div class="aspect-square bg-stone-200 overflow-hidden" data-aos="zoom-in" data-aos-delay="100"><img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"></div>
+            <div class="aspect-square bg-stone-200 overflow-hidden" data-aos="zoom-in" data-aos-delay="150"><img src="https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"></div>
+            <div class="aspect-square bg-stone-200 overflow-hidden hidden lg:block" data-aos="zoom-in" data-aos-delay="200"><img src="https://images.unsplash.com/photo-1550989460-0adf9ea622e2?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"></div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-stone-50 border-t border-stone-200 pt-24 pb-12">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-16 mb-24" data-aos="fade-up">
+                <div class="col-span-1 md:col-span-1">
+                    <h4 class="serif text-2xl tracking-widest uppercase mb-8">The Plantry</h4>
+                    <p class="text-[11px] leading-relaxed text-stone-500 uppercase tracking-widest">
+                        Nourishing the collective through intentional provisions.
+                    </p>
+                </div>
+                <div>
+                    <h5 class="text-[10px] tracking-[0.2em] uppercase mb-6 font-semibold">Information</h5>
+                    <ul class="text-[11px] uppercase tracking-widest space-y-4 text-stone-500">
+                        <li><a href="#" class="hover:text-stone-900 transition-colors">Shipping & Returns</a></li>
+                        <li><a href="#" class="hover:text-stone-900 transition-colors">Wholesale</a></li>
+                        <li><a href="#" class="hover:text-stone-900 transition-colors">Contact</a></li>
+                        <li><a href="#" class="hover:text-stone-900 transition-colors">Stockists</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="text-[10px] tracking-[0.2em] uppercase mb-6 font-semibold">Legal</h5>
+                    <ul class="text-[11px] uppercase tracking-widest space-y-4 text-stone-500">
+                        <li><a href="#" class="hover:text-stone-900 transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-stone-900 transition-colors">Terms of Service</a></li>
+                        <li><a href="#" class="hover:text-stone-900 transition-colors">Accessibility</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="text-[10px] tracking-[0.2em] uppercase mb-6 font-semibold">Newsletter</h5>
+                    <p class="text-[11px] text-stone-500 uppercase tracking-widest mb-6 leading-relaxed">Join our list for seasonal menu updates and wellness insights.</p>
+                    <form class="flex border-b border-stone-300 pb-2" id="newsletter-form">
+                        <input type="email" placeholder="EMAIL ADDRESS" class="bg-transparent text-[11px] w-full focus:outline-none tracking-widest" required>
+                        <button type="submit" class="text-[11px] uppercase tracking-widest">Submit</button>
+                    </form>
+                </div>
+            </div>
+            <div class="text-[9px] tracking-[0.3em] uppercase text-stone-400 text-center">
+                &copy; 2024 The Plantry Provisions. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- AOS - Animate On Scroll -->
+    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 1000,
+            easing: 'ease-in-out-cubic',
+            once: true,
+            offset: 100,
+            delay: 0
+        });
+    </script>
+    <script src="/js/app.js"></script>
+</body>
+</html>
