@@ -170,7 +170,11 @@ async function loadCart() {
 // Update cart count badge
 function updateCartCount() {
   const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-  document.getElementById('cart-count').textContent = count;
+  const badge = document.getElementById('cart-count');
+  if (badge) badge.textContent = count;
+  try {
+    localStorage.setItem('cartCount', count);
+  } catch {}
 }
 
 // Setup event listeners

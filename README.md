@@ -21,7 +21,8 @@ Interactions: Intersection Observer API for scroll animations and smooth-scroll 
 📂 Project Structure
 Plaintext
 the-plantry/
-├── index.html          # Main landing page featuring Hero, Shop, and Story sections
+├── index-mpa.html      # Updated multi‑page application shell with Jamaican localization
+├── index.html          # Legacy page; now redirects to index-mpa.html
 ├── assets/             # (Placeholder) Brand assets and local images
 └── README.md           # Project documentation and brand guide
 🎨 Design Guide

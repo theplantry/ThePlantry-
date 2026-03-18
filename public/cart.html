@@ -15,13 +15,8 @@
 </head>
 <body>
 
-    <!-- Navigation -->
-    <nav class="sticky top-0 z-50 bg-stone-50/80 backdrop-blur-md border-b border-stone-200">
-        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-            <a href="/index.html" class="text-xl uppercase serif">The Plantry</a>
-            <a href="/index.html" class="text-sm uppercase tracking-widest">← Back to Shop</a>
-        </div>
-    </nav>
+    <!-- Navigation (injected) -->
+    <div id="site-header"></div>
 
     <!-- Cart Section -->
     <section class="max-w-4xl mx-auto px-6 py-24">
@@ -66,6 +61,8 @@
         </div>
     </section>
 
+    <div id="site-footer"></div>
+    <script src="/js/layout.js"></script>
     <script>
         const API_BASE = '/api';
         let cartItems = [];

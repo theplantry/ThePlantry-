@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Plantry | Jamaican Plant-Based Provisions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --stone-50: #f9f8f6;
+            --stone-100: #f5f5f4;
+            --stone-200: #e7e5e4;
+            --stone-400: #a8a29e;
+            --stone-500: #78716c;
+            --stone-900: #1c1917;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--stone-50);
+            color: var(--stone-900);
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+        .serif {
+            font-family: 'Playfair Display', serif;
+        }
+        .nav-link {
+            position: relative;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: -2px;
+            left: 0;
+            background-color: var(--stone-900);
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .hero-gradient {
+            background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.3));
+        }
+        .page-content {
+            display: none;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .page-content.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .product-card img {
+            transition: transform 1.2s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+        .product-card:hover img {
+            transform: scale(1.05);
+        }
+        .glass-nav {
+            background: rgba(249, 248, 246, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .filter-btn {
+            transition: all 0.3s ease;
+        }
+        .filter-btn.active {
+            color: var(--stone-900);
+            border-bottom: 1px solid var(--stone-900);
+        }
+        .img-container {
+            background-color: #e7e5e4;
+            position: relative;
+            overflow: hidden;
+        }
+        /* Mobile Menu */
+        #mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #mobile-menu.open {
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Announcement Bar -->
+    <div class="w-full bg-stone-900 text-stone-50 py-2.5 text-center text-[9px] md:text-[10px] tracking-[0.25em] uppercase fixed top-0 z-[70]">
+        Island-wide delivery available | Fresh from the Blue Mountains
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-[35px] w-full z-50 glass-nav border-b border-stone-200">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <!-- Left: Desktop Links -->
+            <div class="hidden md:flex space-x-10">
+                <a onclick="navigateTo('shop')" class="nav-link">Provisions</a>
+                <a onclick="navigateTo('story')" class="nav-link">Our Roots</a>
+            </div>
+
+            <!-- Mobile: Menu Toggle -->
+            <div class="md:hidden">
+                <button onclick="toggleMobileMenu()" class="p-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+                </button>
+            </div>
+            
+            <!-- Logo -->
+            <a onclick="navigateTo('home')" class="text-xl md:text-2xl tracking-[0.35em] uppercase serif font-medium cursor-pointer">The Plantry</a>
+            
+            <!-- Right: Links & Cart -->
+            <div class="flex items-center space-x-4 md:space-x-8">
+                <a onclick="navigateTo('locations')" class="nav-link hidden md:block">Outposts</a>
+                <button class="relative group p-2" onclick="showToast('Basket is empty')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                    <span id="cart-count" class="absolute top-0 right-0 bg-stone-900 text-white text-[8px] w-4 h-4 rounded-full flex items-center justify-center">0</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 z-[80] bg-stone-50 flex flex-col p-10 md:hidden">
+        <button onclick="toggleMobileMenu()" class="absolute top-10 right-10">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg>
+        </button>
+        <div class="flex flex-col space-y-8 mt-20 text-2xl serif italic">
+            <a onclick="navigateTo('shop'); toggleMobileMenu()" class="cursor-pointer">Provisions</a>
+            <a onclick="navigateTo('story'); toggleMobileMenu()" class="cursor-pointer">Our Roots</a>
+            <a onclick="navigateTo('locations'); toggleMobileMenu()" class="cursor-pointer">Island Outposts</a>
+        </div>
+        <div class="mt-auto border-t border-stone-200 pt-8 text-[10px] tracking-[0.2em] uppercase text-stone-400">
+            &copy; 2024 The Plantry Jamaica
+        </div>
+    </div>
+
+    <main class="pt-[115px]">
+        
+        <!-- HOME PAGE -->
+        <div id="home" class="page-content active">
+            <section class="relative h-[85vh] flex items-center justify-center overflow-hidden mx-4 md:mx-6 rounded-sm">
+                <img src="https://images.unsplash.com/photo-1510074377623-8cf13fb86c08?auto=format&fit=crop&q=80&w=2000" 
+                     alt="Lush Jamaican Tropical Greenery" class="absolute inset-0 w-full h-full object-cover">
+                <div class="absolute inset-0 hero-gradient"></div>
+                <div class="relative text-center text-white px-6">
+                    <h1 class="text-5xl md:text-8xl serif italic mb-8">Island Grown.</h1>
+                    <p class="text-[10px] md:text-xs tracking-[0.2em] uppercase max-w-md mx-auto mb-12 opacity-90 leading-loose">
+                        Artisanal Caribbean provisions crafted from the heart of Jamaica's fertile soil.
+                    </p>
+                    <a onclick="navigateTo('shop')" class="inline-block border border-white px-10 md:px-12 py-4 md:py-5 text-[9px] md:text-[10px] tracking-[0.3em] uppercase hover:bg-white hover:text-stone-900 transition-all duration-500 cursor-pointer">
+                        Shop the Island Harvest
+                    </a>
+                </div>
+            </section>
+
+            <section class="max-w-7xl mx-auto px-6 py-24 md:py-32 grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-24 items-center">
+                <div class="order-2 md:order-1">
+                    <h2 class="text-[9px] md:text-[10px] tracking-[0.4em] uppercase text-stone-400 mb-6">The Philosophy</h2>
+                    <h3 class="text-3xl md:text-5xl serif leading-tight mb-8">Sun, Soil, & Soul.</h3>
+                    <p class="text-stone-600 leading-relaxed font-light mb-10 text-base md:text-lg">
+                        We celebrate the natural abundance of Jamaica. From the peaks of the Blue Mountains to the red soil of St. Elizabeth, we source only the finest organic ingredients from our local farming community.
+                    </p>
+                    <a onclick="navigateTo('story')" class="text-[10px] tracking-[0.25em] uppercase border-b border-stone-900 pb-2 hover:opacity-50 transition-opacity cursor-pointer inline-block">The Journey from Farm to Table</a>
+                </div>
+                <div class="order-1 md:order-2 aspect-[4/5] md:aspect-auto md:h-[600px] img-container rounded-sm shadow-sm">
+                    <img src="https://images.unsplash.com/photo-1488459736882-d7922596f733?auto=format&fit=crop&q=80&w=1000" alt="Fresh Tropical Produce" class="w-full h-full object-cover">
+                </div>
+            </section>
+
+            <!-- Featured Section -->
+            <section class="bg-stone-100 py-24 px-6 text-center">
+                <h2 class="text-[10px] tracking-[0.4em] uppercase text-stone-400 mb-12">New Arrivals</h2>
+                <div class="max-w-xl mx-auto mb-16">
+                    <h3 class="text-4xl serif italic mb-6">June Plum is here.</h3>
+                    <p class="text-stone-500 text-sm font-light">Freshly harvested and cold-pressed for peak nourishment. Available for island-wide delivery.</p>
+                </div>
+                <a onclick="navigateTo('shop')" class="text-[10px] tracking-[0.3em] uppercase bg-stone-900 text-stone-50 px-10 py-5 hover:bg-stone-800 transition-colors cursor-pointer">Explore All Provisions</a>
+            </section>
+        </div>
+
+        <!-- SHOP PAGE -->
+        <div id="shop" class="page-content">
+            <div class="max-w-7xl mx-auto px-6 pt-16 pb-32">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-10">
+                    <div class="max-w-xl">
+                        <h1 class="text-4xl md:text-5xl serif mb-6 italic">The Provisions</h1>
+                        <p class="text-stone-500 font-light text-sm leading-relaxed tracking-wide">
+                            Carefully curated plant-based staples, harvested weekly and prepared in small batches for freshness and potency.
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap gap-x-8 gap-y-4 text-[9px] md:text-[10px] uppercase tracking-[0.2em] text-stone-400 border-b border-stone-200 pb-4 w-full md:w-auto">
+                        <button class="filter-btn active" onclick="filterShop('all')">All</button>
+                        <button class="filter-btn" onclick="filterShop('juices')">Juices</button>
+                        <button class="filter-btn" onclick="filterShop('meals')">Clean Meals</button>
+                        <button class="filter-btn" onclick="filterShop('pantry')">Pantry</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-24">
+                    <!-- Product Item Template -->
+                    <div class="product-card group cursor-pointer" onclick="showToast('Item details coming soon')">
+                        <div class="aspect-[4/5] img-container mb-6 relative group">
+                            <img src="https://images.unsplash.com/photo-1610970881699-44a55869f9c2?auto=format&fit=crop&q=80&w=1000" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-500"></div>
+                            <div class="absolute bottom-6 left-0 right-0 px-6 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-500">
+                                <button onclick="event.stopPropagation(); addToCart();" class="w-full bg-white py-4 text-[9px] tracking-[0.3em] uppercase font-medium shadow-sm hover:bg-stone-900 hover:text-white transition-colors">Add to Basket</button>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-baseline">
+                                <h4 class="text-[11px] tracking-[0.25em] uppercase font-medium">June Plum & Ginger</h4>
+                                <span class="text-[11px] text-stone-500 font-light">$1,200 JMD</span>
+                            </div>
+                            <p class="text-[11px] text-stone-400 italic">Antioxidant-rich, cold-pressed daily.</p>
+                        </div>
+                    </div>
+
+                    <div class="product-card group cursor-pointer" onclick="showToast('Item details coming soon')">
+                        <div class="aspect-[4/5] img-container mb-6 relative group">
+                            <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=1000" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-500"></div>
+                            <div class="absolute bottom-6 left-0 right-0 px-6 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-500">
+                                <button onclick="event.stopPropagation(); addToCart();" class="w-full bg-white py-4 text-[9px] tracking-[0.3em] uppercase font-medium shadow-sm hover:bg-stone-900 hover:text-white transition-colors">Add to Basket</button>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-baseline">
+                                <h4 class="text-[11px] tracking-[0.25em] uppercase font-medium">Ital Harvest Bowl</h4>
+                                <span class="text-[11px] text-stone-500 font-light">$2,500 JMD</span>
+                            </div>
+                            <p class="text-[11px] text-stone-400 italic">Steamed callaloo, quinoa, roasted pumpkin.</p>
+                        </div>
+                    </div>
+
+                    <div class="product-card group cursor-pointer" onclick="showToast('Item details coming soon')">
+                        <div class="aspect-[4/5] img-container mb-6 relative group">
+                            <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=1000" class="w-full h-full object-cover">
+                            <div class="absolute top-4 right-4 bg-stone-900 text-white text-[8px] tracking-[0.2em] px-3 py-1.5 uppercase">Low Stock</div>
+                            <div class="absolute bottom-6 left-0 right-0 px-6 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-500">
+                                <button onclick="event.stopPropagation(); addToCart();" class="w-full bg-white py-4 text-[9px] tracking-[0.3em] uppercase font-medium shadow-sm hover:bg-stone-900 hover:text-white transition-colors">Add to Basket</button>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-baseline">
+                                <h4 class="text-[11px] tracking-[0.25em] uppercase font-medium">Blue Mountain Reserve</h4>
+                                <span class="text-[11px] text-stone-500 font-light">$4,800 JMD</span>
+                            </div>
+                            <p class="text-[11px] text-stone-400 italic">Estate-grown, small-batch roasted.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STORY PAGE -->
+        <div id="story" class="page-content">
+            <section class="max-w-4xl mx-auto px-6 py-24 md:py-32">
+                <div class="text-center mb-24">
+                    <h2 class="text-[10px] tracking-[0.5em] uppercase text-stone-400 mb-10">Our Roots</h2>
+                    <h3 class="text-4xl md:text-6xl serif mb-12 italic leading-tight">Honouring the richness of our island's bounty.</h3>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-24 text-stone-600 font-light leading-relaxed text-base md:text-lg">
+                    <div class="space-y-8">
+                        <p>The Plantry was born from a deep respect for Jamaican "Ital" traditions—the belief that food should be natural, pure, and from the earth. We've taken those ancestral principles and refined them for the modern lifestyle.</p>
+                        <p>Our journey began in the hills of St. Elizabeth, where the red soil provides the most nutrient-dense crops. We saw a gap between this incredible heritage and the fast-paced life of our cities.</p>
+                    </div>
+                    <div class="space-y-8">
+                        <p>Today, we work hand-in-hand with small farmers, ensuring that our sourcing practices remain sustainable while providing the highest quality ingredients to our communities in Kingston and Montego Bay.</p>
+                        <p>It is more than just food; it is a vibration. Natural, intentional, and uniquely Jamaican.</p>
+                    </div>
+                </div>
+            </section>
+            <div class="h-[60vh] md:h-[80vh] w-full overflow-hidden img-container">
+                <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&q=80&w=2000" class="w-full h-full object-cover">
+            </div>
+        </div>
+
+        <!-- LOCATIONS PAGE -->
+        <div id="locations" class="page-content">
+            <div class="max-w-7xl mx-auto px-6 py-24">
+                <div class="text-center mb-20">
+                    <h2 class="text-4xl md:text-5xl serif mb-6 italic">Island Outposts</h2>
+                    <p class="text-stone-400 text-[10px] tracking-[0.3em] uppercase">Visit us in person</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+                    <div class="border border-stone-200 p-8 md:p-12 bg-white flex flex-col items-center text-center group">
+                        <div class="w-12 h-px bg-stone-200 group-hover:w-20 group-hover:bg-stone-900 transition-all duration-500 mb-8"></div>
+                        <h4 class="text-[10px] tracking-[0.3em] uppercase text-stone-400 mb-4">Kingston</h4>
+                        <p class="serif text-2xl md:text-3xl mb-6 italic">Barbican Flagship</p>
+                        <p class="text-stone-500 text-sm mb-10 leading-relaxed max-w-xs">
+                            88 Barbican Road<br>Kingston 6, Jamaica<br>
+                            <span class="text-stone-400 mt-2 block">+1 (876) 555-0123</span>
+                        </p>
+                        <div class="text-[9px] tracking-widest uppercase space-y-2 text-stone-400">
+                            <p>Mon — Fri: 7am - 8pm</p>
+                            <p>Sat: 8am - 7pm</p>
+                        </div>
+                    </div>
+                    <div class="border border-stone-200 p-8 md:p-12 bg-white flex flex-col items-center text-center group">
+                        <div class="w-12 h-px bg-stone-200 group-hover:w-20 group-hover:bg-stone-900 transition-all duration-500 mb-8"></div>
+                        <h4 class="text-[10px] tracking-[0.3em] uppercase text-stone-400 mb-4">Montego Bay</h4>
+                        <p class="serif text-2xl md:text-3xl mb-6 italic">Fairview Outpost</p>
+                        <p class="text-stone-500 text-sm mb-10 leading-relaxed max-w-xs">
+                            Fairview Shopping Centre<br>Montego Bay, St. James<br>
+                            <span class="text-stone-400 mt-2 block">+1 (876) 555-0124</span>
+                        </p>
+                        <div class="text-[9px] tracking-widest uppercase space-y-2 text-stone-400">
+                            <p>Mon — Sat: 9am - 7pm</p>
+                            <p>Sun: Closed</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-stone-50 border-t border-stone-200 pt-24 md:pt-32 pb-12 mt-20">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-16 mb-24">
+                <div class="col-span-1 md:col-span-1">
+                    <h4 class="serif text-2xl tracking-widest uppercase mb-8">The Plantry</h4>
+                    <p class="text-[9px] leading-relaxed text-stone-400 uppercase tracking-[0.2em] max-w-xs">
+                        High-vibrational plant-based provisions. Sourced from Jamaica's heartland.
+                    </p>
+                </div>
+                <div>
+                    <h5 class="text-[10px] tracking-[0.2em] uppercase mb-8 font-semibold">Explore</h5>
+                    <ul class="text-[10px] uppercase tracking-widest space-y-4 text-stone-400">
+                        <li><a onclick="navigateTo('shop')" class="hover:text-stone-900 transition-colors cursor-pointer">Shop All</a></li>
+                        <li><a onclick="navigateTo('story')" class="hover:text-stone-900 transition-colors cursor-pointer">Our Roots</a></li>
+                        <li><a onclick="navigateTo('locations')" class="hover:text-stone-900 transition-colors cursor-pointer">Island Outposts</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="text-[10px] tracking-[0.2em] uppercase mb-8 font-semibold">Contact</h5>
+                    <ul class="text-[10px] uppercase tracking-widest space-y-4 text-stone-400">
+                        <li><a href="mailto:hello@theplantry.jm" class="hover:text-stone-900 transition-colors">Support</a></li>
+                        <li><a href="#" class="hover:text-stone-900 transition-colors">Instagram</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="text-[10px] tracking-[0.2em] uppercase mb-8 font-semibold">Newsletter</h5>
+                    <p class="text-[10px] text-stone-400 uppercase tracking-widest mb-6">Join for harvest updates.</p>
+                    <div class="flex border-b border-stone-300 pb-2">
+                        <input type="email" placeholder="EMAIL" class="bg-transparent text-[10px] w-full focus:outline-none tracking-widest placeholder:text-stone-300">
+                        <button onclick="showToast('Thank you for subscribing')" class="text-[10px] uppercase tracking-widest px-2">Sub</button>
+                    </div>
+                </div>
+            </div>
+            <div class="text-[8px] md:text-[9px] tracking-[0.3em] uppercase text-stone-400 text-center border-t border-stone-100 pt-12">
+                &copy; 2024 The Plantry Jamaica. Ital is Vital. Crafted for the heart.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notification Overlay -->
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] bg-stone-900 text-stone-50 text-[10px] tracking-widest uppercase px-8 py-4 opacity-0 transition-opacity duration-300 pointer-events-none">
+        Message goes here
+    </div>
+
+    <script>
+        let cartCount = 0;
+
+        function navigateTo(pageId) {
+            // Update active state in UI
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            const target = document.getElementById(pageId);
+            if (target) {
+                target.classList.add('active');
+                window.scrollTo(0, 0);
+            }
+
+            // Sync hash without reloading
+            if (window.location.hash.replace('#', '') !== pageId) {
+                history.pushState(null, null, `#${pageId}`);
+            }
+        }
+
+        function filterShop(category) {
+            showToast(`Filtering for ${category}...`);
+            // Filtering logic would happen here by hiding/showing elements
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('open');
+        }
+
+        function addToCart() {
+            cartCount++;
+            document.getElementById('cart-count').innerText = cartCount;
+            showToast('Item added to basket');
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            toast.style.opacity = '1';
+            setTimeout(() => {
+                toast.style.opacity = '0';
+            }, 3000);
+        }
+
+        // Handle Back/Forward buttons
+        window.addEventListener('popstate', () => {
+            const hash = window.location.hash.replace('#', '') || 'home';
+            navigateTo(hash);
+        });
+
+        // Initialize state
+        window.onload = () => {
+            const hash = window.location.hash.replace('#', '') || 'home';
+            navigateTo(hash);
+            
+            // Add click styling to filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        };
+    </script>
+</body>
+</html>

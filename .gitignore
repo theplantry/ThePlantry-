@@ -24,3 +24,5 @@ out/
 .settings
 *.sublime-workspace
 .history
+.vercel
+.env*.local
