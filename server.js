@@ -30,6 +30,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // static assets (after root override)
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Serve Cloudinary archive images
+app.use('/images', express.static(path.join(__dirname, 'Cloudinary_Archive_2026-03-18_20_32_30_Originals')));
+
 // Database connection
 export const pool = new Pool({
   user: process.env.DB_USER || 'postgres',
@@ -61,7 +64,7 @@ app.use('/api/payment', paymentRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/cloudinary', cloudinaryRoutes);
 
-// Featured products endpoint with Cloudinary images
+// Featured products endpoint with local images
 app.get('/api/featured-products', (req, res) => {
   const products = [
     {
@@ -69,7 +72,7 @@ app.get('/api/featured-products', (req, res) => {
       name: 'Criss1',
       description: 'Premium organic botanical selection',
       price: 24.99,
-      imageUrl: 'https://res.cloudinary.com/dlilbzrl9/image/upload/v1773877452/IMG_1891_snw6am.heic',
+      imageUrl: '/images/PLANTRY%20x%20Wendell/Criss1',
       category: 'greens'
     },
     {
@@ -77,7 +80,7 @@ app.get('/api/featured-products', (req, res) => {
       name: 'Another',
       description: 'Fresh botanical specimen',
       price: 19.99,
-      imageUrl: 'https://res.cloudinary.com/dlilbzrl9/image/upload/v1773877391/IMG_1439.heic_ywjajh.webp',
+      imageUrl: '/images/PLANTRY%20x%20Wendell/Another',
       category: 'bowls'
     }
   ];
