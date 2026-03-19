@@ -114,4 +114,37 @@ function loadLayout() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', loadLayout);
+const CLOUDINARY_COLLECTION = 'https://collection.cloudinary.com/dlilbzrl9/6bfc760b22ca713cc505a62b1e10348d';
+
+async function fetchCloudinaryCollectionImages(collectionUrl) {
+    try {
+        const res = await fetch(collectionUrl);
+        if (!res.ok) return [];
+        const html = await res.text();
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        // Collection pages typically include thumbnails; we prioritize <img> sources.
+        return Array.from(doc.querySelectorAll('img'))
+            .map(img => img.src)
+            .filter(Boolean);
+    } catch (error) {
+        console.warn('Cloudinary collection load failed:', error);
+        return [];
+    }
+}
+
+async function applyCloudinaryImages() {
+    const images = await fetchCloudinaryCollectionImages(CLOUDINARY_COLLECTION);
+    if (!images.length) return;
+
+    document.querySelectorAll('[data-cloudinary-index]').forEach(el => {
+        const idx = Number(el.getAttribute('data-cloudinary-index'));
+        if (!Number.isNaN(idx) && images[idx]) {
+            el.src = images[idx];
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+    loadLayout();
+    await applyCloudinaryImages();
+});
