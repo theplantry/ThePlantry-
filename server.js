@@ -61,6 +61,29 @@ app.use('/api/payment', paymentRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/cloudinary', cloudinaryRoutes);
 
+// Featured products endpoint with Cloudinary images
+app.get('/api/featured-products', (req, res) => {
+  const products = [
+    {
+      id: 1,
+      name: 'Criss1',
+      description: 'Premium organic botanical selection',
+      price: 24.99,
+      imageUrl: 'https://res.cloudinary.com/dlilbzrl9/image/upload/v1773877452/IMG_1891_snw6am.heic',
+      category: 'greens'
+    },
+    {
+      id: 2,
+      name: 'Another',
+      description: 'Fresh botanical specimen',
+      price: 19.99,
+      imageUrl: 'https://res.cloudinary.com/dlilbzrl9/image/upload/v1773877391/IMG_1439.heic_ywjajh.webp',
+      category: 'bowls'
+    }
+  ];
+  res.json(products);
+});
+
 // Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'The Plantry is thriving!' });
