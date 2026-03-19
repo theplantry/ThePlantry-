@@ -28,7 +28,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // static assets (after root override)
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Database connection
 export const pool = new Pool({
