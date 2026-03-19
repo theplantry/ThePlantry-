@@ -114,18 +114,14 @@ function loadLayout() {
     }
 }
 
-const CLOUDINARY_COLLECTION = 'https://collection.cloudinary.com/dlilbzrl9/6bfc760b22ca713cc505a62b1e10348d';
+const CLOUDINARY_IMAGES_API = '/api/cloudinary/images';
 
-async function fetchCloudinaryCollectionImages(collectionUrl) {
+async function fetchCloudinaryCollectionImages() {
     try {
-        const res = await fetch(collectionUrl);
+        const res = await fetch(CLOUDINARY_IMAGES_API);
         if (!res.ok) return [];
-        const html = await res.text();
-        const doc = new DOMParser().parseFromString(html, 'text/html');
-        // Collection pages typically include thumbnails; we prioritize <img> sources.
-        return Array.from(doc.querySelectorAll('img'))
-            .map(img => img.src)
-            .filter(Boolean);
+        const data = await res.json();
+        return Array.isArray(data.images) ? data.images : [];
     } catch (error) {
         console.warn('Cloudinary collection load failed:', error);
         return [];
@@ -146,5 +142,12 @@ async function applyCloudinaryImages() {
 
 document.addEventListener('DOMContentLoaded', async () => {
     loadLayout();
+
+    // Activate the section based on hash if we are on the multi-page shell
+    if (isMultiPage() && typeof navigateTo === 'function') {
+        const hash = window.location.hash.replace('#', '') || 'home';
+        navigateTo(hash);
+    }
+
     await applyCloudinaryImages();
 });

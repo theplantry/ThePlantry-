@@ -31,6 +31,9 @@ function updateNavigation() {
 
 // Load products from API
 async function loadProducts() {
+  const grid = document.getElementById('products-grid');
+  if (!grid) return; // not on a page with a products grid
+
   try {
     const response = await fetch(`${API_BASE}/products`);
     products = await response.json();
@@ -180,26 +183,32 @@ function updateCartCount() {
 // Setup event listeners
 function setupEventListeners() {
   // Category filters
-  document.querySelectorAll('.category-filter').forEach(button => {
-    button.addEventListener('click', (e) => {
-      document.querySelectorAll('.category-filter').forEach(b => {
-        b.classList.remove('text-stone-900', 'border-b', 'border-stone-900');
-        b.classList.add('text-stone-400');
-      });
-      e.target.classList.add('text-stone-900', 'border-b', 'border-stone-900');
-      e.target.classList.remove('text-stone-400');
+  const categoryButtons = document.querySelectorAll('.category-filter');
+  if (categoryButtons.length) {
+    categoryButtons.forEach(button => {
+      button.addEventListener('click', (e) => {
+        categoryButtons.forEach(b => {
+          b.classList.remove('text-stone-900', 'border-b', 'border-stone-900');
+          b.classList.add('text-stone-400');
+        });
+        e.target.classList.add('text-stone-900', 'border-b', 'border-stone-900');
+        e.target.classList.remove('text-stone-400');
 
-      currentCategory = e.target.dataset.category;
-      filterProducts();
+        currentCategory = e.target.dataset.category;
+        filterProducts();
+      });
     });
-  });
+  }
 
   // Newsletter form
-  document.getElementById('newsletter-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    showNotification('Thanks for signing up!');
-    e.target.reset();
-  });
+  const newsletterForm = document.getElementById('newsletter-form');
+  if (newsletterForm) {
+    newsletterForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      showNotification('Thanks for signing up!');
+      e.target.reset();
+    });
+  }
 
   // Smooth scroll for nav links
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {

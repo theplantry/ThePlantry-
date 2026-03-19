@@ -50,6 +50,7 @@ import orderRoutes from './api/routes/orders.js';
 import cartRoutes from './api/routes/cart.js';
 import paymentRoutes from './api/routes/payment.js';
 import adminRoutes from './api/routes/admin.js';
+import cloudinaryRoutes from './api/routes/cloudinary.js';
 
 // API Routes
 app.use('/api/auth', authRoutes);
@@ -58,6 +59,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/cloudinary', cloudinaryRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

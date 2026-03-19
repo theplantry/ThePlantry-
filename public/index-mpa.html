@@ -148,51 +148,16 @@
                     <p class="text-[10px] tracking-[0.3em] uppercase text-stone-500">Nourishment from the Caribbean</p>
                 </div>
                 
-                <div class="flex justify-center space-x-12 mb-20 text-[11px] uppercase tracking-[0.2em] text-stone-400">
-                    <button class="text-stone-900 border-b border-stone-900 pb-1">All Goods</button>
-                        <button class="hover:text-stone-900 transition-colors">Cold-Pressed</button>
-                        <button class="hover:text-stone-900 transition-colors">Ital Meals</button>
-                        <button class="hover:text-stone-900 transition-colors">Pantry</button>
+                <div class="flex justify-center space-x-12 mb-20 text-[11px] uppercase tracking-[0.2em]">
+                    <button class="category-filter text-stone-900 border-b border-stone-900 pb-1" data-category="all">All Goods</button>
+                    <button class="category-filter text-stone-400" data-category="juices">Cold-Pressed</button>
+                    <button class="category-filter text-stone-400" data-category="meals">Ital Meals</button>
+                    <button class="category-filter text-stone-400" data-category="pantry">Pantry</button>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-x-10 gap-y-20">
-                    <!-- Example products -->
-                    <div class="product-card group cursor-pointer">
-                        <div class="aspect-[3/4] overflow-hidden bg-stone-100 mb-6 relative">
-                            <img data-cloudinary-index="2" src="https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?auto=format&fit=crop&q=80&w=1000" class="w-full h-full object-cover">
-                            <div class="absolute bottom-4 left-4 bg-white/90 px-3 py-1 text-[9px] tracking-widest uppercase">Freshly Squeezed</div>
-                        </div>
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <h4 class="text-sm tracking-widest uppercase mb-1">June Plum & Ginger</h4>
-                                <p class="text-[11px] text-stone-400 italic">Sweet Plum with a Spicy Kick</p>
-                            </div>
-                            <span class="text-sm text-stone-600">$1,200 JMD</span>
-                        </div>
-                    </div>
-                    <div class="product-card group cursor-pointer">
-                        <div class="aspect-[3/4] overflow-hidden bg-stone-100 mb-6 relative">
-                            <img data-cloudinary-index="3" src="https://images.unsplash.com/photo-1543339308-43e59d6b73a6?auto=format&fit=crop&q=80&w=1000" class="w-full h-full object-cover">
-                        </div>
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <h4 class="text-sm tracking-widest uppercase mb-1">Ital Harvest Bowl</h4>
-                                <p class="text-[11px] text-stone-400 italic">Steamed Callaloo & Roasted Breadfruit</p>
-                            </div>
-                            <span class="text-sm text-stone-600">$2,500 JMD</span>
-                        </div>
-                    </div>
-                    <div class="product-card group cursor-pointer">
-                        <div class="aspect-[3/4] overflow-hidden bg-stone-100 mb-6 relative">
-                            <img data-cloudinary-index="4" src="https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&q=80&w=1000" class="w-full h-full object-cover">
-                        </div>
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <h4 class="text-sm tracking-widest uppercase mb-1">Blue Mountain Reserve</h4>
-                                <p class="text-[11px] text-stone-400 italic">Single-Origin Medium Roast</p>
-                            </div>
-                            <span class="text-sm text-stone-600">$4,800 JMD</span>
-                        </div>
+                <div id="products-grid" class="grid grid-cols-1 md:grid-cols-3 gap-x-10 gap-y-20">
+                    <div class="col-span-1 md:col-span-3 text-center text-stone-500" id="products-loading">
+                        Loading products...
                     </div>
                 </div>
             </div>
