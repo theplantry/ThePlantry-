@@ -208,59 +208,7 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-24">
-                    <!-- Product Item Template -->
-                    <div class="product-card group cursor-pointer" onclick="showToast('Item details coming soon')">
-                        <div class="aspect-[4/5] img-container mb-6 relative group">
-                            <img data-cloudinary-index="2" src="https://images.unsplash.com/photo-1610970881699-44a55869f9c2?auto=format&fit=crop&q=80&w=1000" class="w-full h-full object-cover">
-                            <div class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-500"></div>
-                            <div class="absolute bottom-6 left-0 right-0 px-6 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-500">
-                                <button onclick="event.stopPropagation(); addToCart();" class="w-full bg-white py-4 text-[9px] tracking-[0.3em] uppercase font-medium shadow-sm hover:bg-stone-900 hover:text-white transition-colors">Add to Basket</button>
-                            </div>
-                        </div>
-                        <div class="space-y-2">
-                            <div class="flex justify-between items-baseline">
-                                <h4 class="text-[11px] tracking-[0.25em] uppercase font-medium">June Plum & Ginger</h4>
-                                <span class="text-[11px] text-stone-500 font-light">$1,200 JMD</span>
-                            </div>
-                            <p class="text-[11px] text-stone-400 italic">Antioxidant-rich, cold-pressed daily.</p>
-                        </div>
-                    </div>
-
-                    <div class="product-card group cursor-pointer" onclick="showToast('Item details coming soon')">
-                        <div class="aspect-[4/5] img-container mb-6 relative group">
-                            <img data-cloudinary-index="3" src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=1000" class="w-full h-full object-cover">
-                            <div class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-500"></div>
-                            <div class="absolute bottom-6 left-0 right-0 px-6 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-500">
-                                <button onclick="event.stopPropagation(); addToCart();" class="w-full bg-white py-4 text-[9px] tracking-[0.3em] uppercase font-medium shadow-sm hover:bg-stone-900 hover:text-white transition-colors">Add to Basket</button>
-                            </div>
-                        </div>
-                        <div class="space-y-2">
-                            <div class="flex justify-between items-baseline">
-                                <h4 class="text-[11px] tracking-[0.25em] uppercase font-medium">Ital Harvest Bowl</h4>
-                                <span class="text-[11px] text-stone-500 font-light">$2,500 JMD</span>
-                            </div>
-                            <p class="text-[11px] text-stone-400 italic">Steamed callaloo, quinoa, roasted pumpkin.</p>
-                        </div>
-                    </div>
-
-                    <div class="product-card group cursor-pointer" onclick="showToast('Item details coming soon')">
-                        <div class="aspect-[4/5] img-container mb-6 relative group">
-                            <img data-cloudinary-index="4" src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=1000" class="w-full h-full object-cover">
-                            <div class="absolute top-4 right-4 bg-stone-900 text-white text-[8px] tracking-[0.2em] px-3 py-1.5 uppercase">Low Stock</div>
-                            <div class="absolute bottom-6 left-0 right-0 px-6 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-500">
-                                <button onclick="event.stopPropagation(); addToCart();" class="w-full bg-white py-4 text-[9px] tracking-[0.3em] uppercase font-medium shadow-sm hover:bg-stone-900 hover:text-white transition-colors">Add to Basket</button>
-                            </div>
-                        </div>
-                        <div class="space-y-2">
-                            <div class="flex justify-between items-baseline">
-                                <h4 class="text-[11px] tracking-[0.25em] uppercase font-medium">Blue Mountain Reserve</h4>
-                                <span class="text-[11px] text-stone-500 font-light">$4,800 JMD</span>
-                            </div>
-                            <p class="text-[11px] text-stone-400 italic">Estate-grown, small-batch roasted.</p>
-                        </div>
-                    </div>
-                </div>
+                <div id="shop-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-24"></div>
             </div>
         </div>
 
@@ -393,20 +341,72 @@
             }
         }
 
+        let cartCount = 0;
+        let shopProducts = [];
+
         function filterShop(category) {
-            showToast(`Filtering for ${category}...`);
-            // Filtering logic would happen here by hiding/showing elements
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            filterButtons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+            const targetButton = [...filterButtons].find(btn => btn.textContent.trim().toLowerCase() === category.toLowerCase() || (category === 'all' && btn.textContent.trim().toLowerCase() === 'all'));
+            if (targetButton) targetButton.classList.add('active');
+            showToast(`Filtering for ${category}`);
+            loadShopProducts(category);
+        }
+
+        async function loadShopProducts(category = 'all') {
+            try {
+                const url = category && category !== 'all' ? `/api/products?category=${encodeURIComponent(category)}` : '/api/products';
+                const res = await fetch(url);
+                if (!res.ok) throw new Error('Could not load products');
+                shopProducts = await res.json();
+                renderShopProducts(shopProducts);
+            } catch (error) {
+                console.error(error);
+                const grid = document.getElementById('shop-grid');
+                if (grid) {
+                    grid.innerHTML = '<div class="col-span-full text-center text-stone-500">Unable to load shop items right now.</div>';
+                }
+            }
+        }
+
+        function renderShopProducts(products) {
+            const grid = document.getElementById('shop-grid');
+            if (!grid) return;
+            if (!products.length) {
+                grid.innerHTML = '<div class="col-span-full text-center text-stone-500">No items found for this category.</div>';
+                return;
+            }
+            grid.innerHTML = products.map(product => `
+                <div class="product-card group cursor-pointer" onclick="showToast('Open details soon')">
+                    <div class="aspect-[4/5] img-container mb-6 relative group">
+                        <img src="${product.image_url || product.imageUrl || 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&q=80&w=1000'}" class="w-full h-full object-cover" alt="${product.name}">
+                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-500"></div>
+                        <div class="absolute bottom-6 left-0 right-0 px-6 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-500">
+                            <button onclick="event.stopPropagation(); addToCart('${product.name}');" class="w-full bg-white py-4 text-[9px] tracking-[0.3em] uppercase font-medium shadow-sm hover:bg-stone-900 hover:text-white transition-colors">Add to Basket</button>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-baseline">
+                            <h4 class="text-[11px] tracking-[0.25em] uppercase font-medium">${product.name}</h4>
+                            <span class="text-[11px] text-stone-500 font-light">${product.price ? `JMD ${product.price.toFixed(2)}` : 'Contact for price'}</span>
+                        </div>
+                        <p class="text-[11px] text-stone-400 italic">${product.description || product.ingredients || 'Fresh, local product.'}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addToCart(itemName) {
+            cartCount++;
+            document.getElementById('cart-count').innerText = cartCount;
+            showToast(`${itemName || 'Item'} added to basket`);
         }
 
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
             menu.classList.toggle('open');
-        }
-
-        function addToCart() {
-            cartCount++;
-            document.getElementById('cart-count').innerText = cartCount;
-            showToast('Item added to basket');
         }
 
         function showToast(message) {
@@ -415,7 +415,7 @@
             toast.style.opacity = '1';
             setTimeout(() => {
                 toast.style.opacity = '0';
-            }, 3000);
+            }, 2500);
         }
 
         // Handle Back/Forward buttons
@@ -428,7 +428,7 @@
         window.onload = () => {
             const hash = window.location.hash.replace('#', '') || 'home';
             navigateTo(hash);
-            
+
             // Add click styling to filter buttons
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -436,6 +436,8 @@
                     this.classList.add('active');
                 });
             });
+
+            loadShopProducts('all');
         };
     </script>
 </body>

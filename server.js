@@ -28,10 +28,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // static assets (after root override)
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Serve Cloudinary archive images
-app.use('/images', express.static(path.join(__dirname, 'Cloudinary_Archive_2026-03-18_20_32_30_Originals')));
+app.use(express.static('public'));
 
 // Database connection
 export const pool = new Pool({
@@ -64,27 +61,25 @@ app.use('/api/payment', paymentRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/cloudinary', cloudinaryRoutes);
 
-// Featured products endpoint with local images
-app.get('/api/featured-products', (req, res) => {
-  const products = [
+// Gallery images endpoint
+app.get('/api/gallery', (req, res) => {
+  const galleryImages = [
     {
       id: 1,
       name: 'Criss1',
-      description: 'Premium organic botanical selection',
-      price: 24.99,
-      imageUrl: '/images/PLANTRY%20x%20Wendell/Criss1',
+      description: 'Description',
+      imageUrl: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&q=80&w=900',
       category: 'greens'
     },
     {
       id: 2,
       name: 'Another',
       description: 'Fresh botanical specimen',
-      price: 19.99,
-      imageUrl: '/images/PLANTRY%20x%20Wendell/Another',
-      category: 'bowls'
+      imageUrl: 'https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?auto=format&fit=crop&q=80&w=900',
+      category: 'gallery'
     }
   ];
-  res.json(products);
+  res.json(galleryImages);
 });
 
 // Health check
