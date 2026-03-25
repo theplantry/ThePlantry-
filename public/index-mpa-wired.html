@@ -123,7 +123,7 @@
             <!-- Right: Links & Cart -->
             <div class="flex items-center space-x-4 md:space-x-8">
                 <a onclick="navigateTo('locations')" class="nav-link hidden md:block">Outposts</a>
-                <button class="relative group p-2" onclick="showToast('Basket is empty')">
+                <button class="relative group p-2" onclick="window.location.href='/checkout-full.html'">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
                     <span id="cart-count" class="absolute top-0 right-0 bg-stone-900 text-white text-[8px] w-4 h-4 rounded-full flex items-center justify-center">0</span>
                 </button>
@@ -379,18 +379,18 @@
                 return;
             }
             grid.innerHTML = products.map(product => `
-                <div class="product-card group cursor-pointer" onclick="showToast('Open details soon')">
-                    <div class="aspect-[4/5] img-container mb-6 relative group">
+                <div class="product-card group cursor-pointer">
+                    <div class="aspect-[4/5] img-container mb-6 relative group" onclick="openProductModal(${JSON.stringify(product).replace(/"/g, '&quot;')})">
                         <img src="${product.image_url || product.imageUrl || 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&q=80&w=1000'}" class="w-full h-full object-cover" alt="${product.name}">
                         <div class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-500"></div>
                         <div class="absolute bottom-6 left-0 right-0 px-6 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-500">
-                            <button onclick="event.stopPropagation(); addToCart('${product.name}');" class="w-full bg-white py-4 text-[9px] tracking-[0.3em] uppercase font-medium shadow-sm hover:bg-stone-900 hover:text-white transition-colors">Add to Basket</button>
+                            <button onclick="event.stopPropagation(); openProductModal(${JSON.stringify(product).replace(/"/g, '&quot;')});" class="w-full bg-white py-4 text-[9px] tracking-[0.3em] uppercase font-medium shadow-sm hover:bg-stone-900 hover:text-white transition-colors">View & Add</button>
                         </div>
                     </div>
                     <div class="space-y-2">
                         <div class="flex justify-between items-baseline">
                             <h4 class="text-[11px] tracking-[0.25em] uppercase font-medium">${product.name}</h4>
-                            <span class="text-[11px] text-stone-500 font-light">${product.price ? `JMD ${product.price.toFixed(2)}` : 'Contact for price'}</span>
+                            <span class="text-[11px] text-stone-500 font-light">JMD ${(product.price || 0).toFixed(2)}</span>
                         </div>
                         <p class="text-[11px] text-stone-400 italic">${product.description || product.ingredients || 'Fresh, local product.'}</p>
                     </div>
@@ -398,10 +398,74 @@
             `).join('');
         }
 
-        function addToCart(itemName) {
-            cartCount++;
+        function openProductModal(product) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4';
+            modal.innerHTML = `
+                <div class="bg-stone-50 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                    <div class="sticky top-0 bg-white p-4 flex justify-between items-center border-b border-stone-200 z-10">
+                        <h2 class="text-lg serif font-medium">${product.name}</h2>
+                        <button onclick="this.closest('.fixed').remove()" class="text-2xl text-stone-400">×</button>
+                    </div>
+                    <div class="p-8">
+                        <img src="${product.image_url || product.imageUrl}" alt="${product.name}" class="w-full h-96 object-cover rounded mb-8">
+                        <div class="space-y-6">
+                            <div>
+                                <h3 class="text-xs uppercase tracking-widest text-stone-500 mb-2">Description</h3>
+                                <p class="text-base text-stone-900">${product.description}</p>
+                            </div>
+                            <div>
+                                <h3 class="text-xs uppercase tracking-widest text-stone-500 mb-2">Ingredients</h3>
+                                <p class="text-sm text-stone-600">${product.ingredients || 'Premium organic blend'}</p>
+                            </div>
+                            <div class="border-t border-stone-200 pt-6">
+                                <div class="flex justify-between items-center mb-6">
+                                    <span class="text-2xl serif font-medium">JMD ${(product.price || 0).toFixed(2)}</span>
+                                    <div class="flex items-center space-x-3">
+                                        <button onclick="document.getElementById('qty-${product.id}').value = Math.max(1, parseInt(document.getElementById('qty-${product.id}').value) - 1)" class="px-3 py-2 border border-stone-300 text-sm">−</button>
+                                        <input type="number" id="qty-${product.id}" value="1" min="1" class="w-12 text-center border border-stone-300 py-2">
+                                        <button onclick="document.getElementById('qty-${product.id}').value = parseInt(document.getElementById('qty-${product.id}').value) + 1" class="px-3 py-2 border border-stone-300 text-sm">+</button>
+                                    </div>
+                                </div>
+                                <button onclick="addToCart(${product.id}, '${product.name}', ${product.price}, parseInt(document.getElementById('qty-${product.id}').value)); this.closest('.fixed').remove();" class="w-full bg-stone-900 text-white py-4 text-sm tracking-[0.2em] uppercase font-medium hover:bg-stone-800 transition-colors">Add to Basket</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.remove();
+            });
+        }
+
+        function addToCart(productId, productName, price, quantity) {
+            let cartItems = [];
+            const saved = localStorage.getItem('cartItems');
+            if (saved) {
+                try {
+                    cartItems = JSON.parse(saved);
+                } catch(e) {}
+            }
+
+            // Check if product already in cart
+            const existingItem = cartItems.find(item => item.id === productId);
+            if (existingItem) {
+                existingItem.quantity += quantity;
+            } else {
+                cartItems.push({
+                    id: productId,
+                    name: productName,
+                    price: price,
+                    quantity: quantity,
+                    currency: 'JMD'
+                });
+            }
+
+            localStorage.setItem('cartItems', JSON.stringify(cartItems));
+            cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
             document.getElementById('cart-count').innerText = cartCount;
-            showToast(`${itemName || 'Item'} added to basket`);
+            showToast(`${productName} added to basket!`);
         }
 
         function toggleMobileMenu() {
@@ -426,6 +490,16 @@
 
         // Initialize state
         window.onload = () => {
+            // Load cart count
+            const saved = localStorage.getItem('cartItems');
+            if (saved) {
+                try {
+                    const items = JSON.parse(saved);
+                    cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
+                    document.getElementById('cart-count').innerText = cartCount;
+                } catch(e) {}
+            }
+
             const hash = window.location.hash.replace('#', '') || 'home';
             navigateTo(hash);
 

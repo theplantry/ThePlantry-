@@ -51,6 +51,7 @@ import cartRoutes from './api/routes/cart.js';
 import paymentRoutes from './api/routes/payment.js';
 import adminRoutes from './api/routes/admin.js';
 import cloudinaryRoutes from './api/routes/cloudinary.js';
+import checkoutRoutes from './api/routes/checkout.js';
 
 // API Routes
 app.use('/api/auth', authRoutes);
@@ -60,6 +61,7 @@ app.use('/api/cart', cartRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/cloudinary', cloudinaryRoutes);
+app.use('/api/checkout', checkoutRoutes);
 
 // Gallery images endpoint
 app.get('/api/gallery', (req, res) => {
@@ -77,6 +79,48 @@ app.get('/api/gallery', (req, res) => {
       description: 'Vibrant botanical blend',
       imageUrl: '/assets/gallery/criss10.webp',
       category: 'greens'
+    },
+    {
+      id: 3,
+      name: 'Dreamwell Nightcap',
+      description: 'Restful herbal tonic',
+      imageUrl: '/assets/recharge/dreamwell-nightcap.jpg',
+      category: 'recharge'
+    },
+    {
+      id: 4,
+      name: 'Harmony Hearty Brew',
+      description: 'Rooted warmth and balance',
+      imageUrl: '/assets/recharge/harmony-hearty-brew.jpg',
+      category: 'recharge'
+    },
+    {
+      id: 5,
+      name: 'Power Pulse Bar',
+      description: 'Energy dense plant-based bar',
+      imageUrl: '/assets/recharge/power-pulse-bar.jpg',
+      category: 'recharge'
+    },
+    {
+      id: 6,
+      name: 'Rise & Nourish Bowl',
+      description: 'Morning superfood bowl',
+      imageUrl: '/assets/recharge/rise-nourish-bowl.jpg',
+      category: 'recharge'
+    },
+    {
+      id: 7,
+      name: 'Vital Spark Elixir',
+      description: 'Vibrant immune support blend',
+      imageUrl: '/assets/recharge/vital-spark-elixir.jpg',
+      category: 'recharge'
+    },
+    {
+      id: 8,
+      name: 'Wellness Wave',
+      description: 'Hydration + adaptogen infusion',
+      imageUrl: '/assets/recharge/wellness-wave.jpg',
+      category: 'recharge'
     }
   ];
   res.json(galleryImages);

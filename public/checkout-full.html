@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | The Plantry</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --stone-50: #f9f8f6;
+            --stone-100: #f5f5f4;
+            --stone-200: #e7e5e4;
+            --stone-400: #a8a29e;
+            --stone-500: #78716c;
+            --stone-900: #1c1917;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--stone-50);
+            color: var(--stone-900);
+        }
+        .serif {
+            font-family: 'Playfair Display', serif;
+        }
+        .StripeElement {
+            box-sizing: border-box;
+            height: 40px;
+            padding: 10px 12px;
+            border: 1px solid var(--stone-200);
+            border-radius: 4px;
+            background-color: white;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            -moz-osx-font-smoothing: grayscale;
+            -webkit-font-smoothing: antialiased;
+        }
+        .StripeElement--focus {
+            box-shadow: 0 0 0 3px rgba(50, 151, 211, 0.1);
+            border-color: #3297d3;
+        }
+        .StripeElement--invalid {
+            border-color: #fa755a;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-stone-50/80 backdrop-blur-md border-b border-stone-200">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="/" class="text-2xl tracking-[0.3em] uppercase serif font-medium">The Plantry</a>
+            <div class="text-sm text-stone-600">Secure Checkout</div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-6 py-16">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            <!-- Checkout Form -->
+            <div class="lg:col-span-2">
+                <div class="bg-white p-8 rounded-lg border border-stone-200">
+                    <h1 class="text-3xl serif mb-8">Order Details</h1>
+
+                    <!-- Customer Info -->
+                    <div class="mb-8">
+                        <h2 class="text-lg font-medium mb-4">Contact Information</h2>
+                        <div class="space-y-4">
+                            <input type="email" id="email" placeholder="Email address" class="w-full px-4 py-2 border border-stone-200 rounded text-sm" required>
+                            <input type="text" id="fullName" placeholder="Full name" class="w-full px-4 py-2 border border-stone-200 rounded text-sm" required>
+                            <input type="tel" id="phone" placeholder="Phone number" class="w-full px-4 py-2 border border-stone-200 rounded text-sm" required>
+                        </div>
+                    </div>
+
+                    <!-- Address -->
+                    <div class="mb-8">
+                        <h2 class="text-lg font-medium mb-4">Shipping Address</h2>
+                        <div class="space-y-4">
+                            <input type="text" id="address" placeholder="Street address" class="w-full px-4 py-2 border border-stone-200 rounded text-sm" required>
+                            <div class="grid grid-cols-2 gap-4">
+                                <input type="text" id="city" placeholder="City" class="w-full px-4 py-2 border border-stone-200 rounded text-sm" required>
+                                <input type="text" id="postal" placeholder="Postal code" class="w-full px-4 py-2 border border-stone-200 rounded text-sm" required>
+                            </div>
+                            <input type="text" id="country" placeholder="Country" class="w-full px-4 py-2 border border-stone-200 rounded text-sm" required>
+                        </div>
+                    </div>
+
+                    <!-- Currency Selection -->
+                    <div class="mb-8">
+                        <h2 class="text-lg font-medium mb-4">Billing Currency</h2>
+                        <select id="currency" class="w-full px-4 py-2 border border-stone-200 rounded text-sm">
+                            <option value="USD">USD - United States Dollar</option>
+                            <option value="EUR">EUR - Euro</option>
+                            <option value="GBP">GBP - British Pound</option>
+                            <option value="CAD">CAD - Canadian Dollar</option>
+                            <option value="AUD">AUD - Australian Dollar</option>
+                            <option value="JMD">JMD - Jamaican Dollar</option>
+                        </select>
+                    </div>
+
+                    <!-- Payment -->
+                    <div class="mb-8">
+                        <h2 class="text-lg font-medium mb-4">Payment Method</h2>
+                        <div id="card-element" class="mb-4"></div>
+                        <div id="card-errors" class="text-red-600 text-sm mb-4"></div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button id="submit-btn" class="w-full bg-stone-900 text-white py-3 rounded font-medium hover:bg-stone-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        Complete Purchase
+                    </button>
+                </div>
+
+                <!-- Order Confirmation (Hidden) -->
+                <div id="confirmation" class="hidden mt-8 bg-white p-8 rounded-lg border border-stone-200">
+                    <h2 class="text-2xl serif mb-6">Order Confirmed!</h2>
+                    <div class="space-y-4 text-sm">
+                        <div class="flex justify-between border-b border-stone-200 pb-3">
+                            <span>Order ID:</span>
+                            <span id="conf-order-id" class="font-medium"></span>
+                        </div>
+                        <div class="flex justify-between border-b border-stone-200 pb-3">
+                            <span>Amount:</span>
+                            <span id="conf-amount" class="font-medium"></span>
+                        </div>
+                        <div class="flex justify-between border-b border-stone-200 pb-3">
+                            <span>Email:</span>
+                            <span id="conf-email" class="font-medium"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Status:</span>
+                            <span class="text-green-600 font-medium">Completed</span>
+                        </div>
+                    </div>
+                    <a href="/" class="inline-block mt-6 px-6 py-2 border border-stone-900 text-stone-900 text-sm tracking-wider hover:bg-stone-900 hover:text-white transition-colors">Return to Shop</a>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="lg:col-span-1">
+                <div class="bg-white p-8 rounded-lg border border-stone-200 sticky top-32">
+                    <h2 class="text-lg font-medium mb-6">Order Summary</h2>
+
+                    <!-- Items -->
+                    <div id="summary-items" class="space-y-4 mb-6 max-h-96 overflow-y-auto">
+                        <!-- Populated by JS -->
+                    </div>
+
+                    <!-- Divider -->
+                    <div class="border-t border-stone-200 my-6"></div>
+
+                    <!-- Subtotal -->
+                    <div class="flex justify-between text-sm mb-3">
+                        <span class="text-stone-600">Subtotal</span>
+                        <span id="summary-subtotal">$0.00</span>
+                    </div>
+
+                    <!-- Exchange Rate Info -->
+                    <div id="exchange-info" class="text-xs text-stone-500 mb-4 p-3 bg-stone-50 rounded">
+                        <div id="exchange-rate-display"></div>
+                    </div>
+
+                    <!-- Processing Fee -->
+                    <div class="flex justify-between text-sm mb-4 p-3 bg-amber-50 rounded border border-amber-100">
+                        <div>
+                            <span class="text-stone-600">Processing Fee</span>
+                            <span class="text-xs text-stone-500 block">(6%)</span>
+                        </div>
+                        <span id="summary-fee">$0.00</span>
+                    </div>
+
+                    <!-- Divider -->
+                    <div class="border-t border-stone-200 my-6"></div>
+
+                    <!-- Total -->
+                    <div class="flex justify-between text-lg font-medium mb-2">
+                        <span>Total</span>
+                        <span id="summary-total">$0.00</span>
+                    </div>
+                    <div class="text-xs text-stone-500 mb-6">
+                        <span id="summary-currency">USD</span>
+                    </div>
+
+                    <!-- Security Badge -->
+                    <div class="text-center text-[10px] text-stone-400 tracking-wider uppercase">
+                        🔒 Secured with Stripe
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Notifications -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-stone-900 text-white px-6 py-4 rounded opacity-0 transition-opacity duration-300 pointer-events-none z-50"></div>
+
+    <script>
+        const stripe = Stripe('pk_test_51234567890'); // Replace with real public key
+        const elements = stripe.elements();
+        const cardElement = elements.create('card');
+        cardElement.mount('#card-element');
+
+        // State
+        let cart = [];
+        let currentCurrency = 'USD';
+        let orderSummary = null;
+
+        // Load cart from localStorage
+        function loadCart() {
+            const saved = localStorage.getItem('cartItems');
+            if (saved) {
+                try {
+                    cart = JSON.parse(saved);
+                    renderSummary();
+                } catch (e) {
+                    console.error('Failed to load cart', e);
+                }
+            }
+        }
+
+        // Render order summary
+        async function renderSummary() {
+            const itemsDiv = document.getElementById('summary-items');
+            itemsDiv.innerHTML = '';
+
+            cart.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'flex justify-between text-sm';
+                div.innerHTML = `
+                    <div>
+                        <div class="font-medium">${item.name}</div>
+                        <div class="text-xs text-stone-500">Qty: ${item.quantity}</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="font-medium">${item.currency}${(item.price * item.quantity).toFixed(2)}</div>
+                    </div>
+                `;
+                itemsDiv.appendChild(div);
+            });
+
+            // Calculate totals
+            await updateTotals();
+        }
+
+        // Update totals with currency conversion
+        async function updateTotals() {
+            try {
+                const response = await fetch('/api/checkout/calculate-total', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        items: cart,
+                        currency: currentCurrency
+                    })
+                });
+
+                if (!response.ok) throw new Error('Failed to calculate total');
+                
+                orderSummary = await response.json();
+
+                // Update DOM
+                document.getElementById('summary-subtotal').textContent = 
+                    `${currentCurrency}${(orderSummary.subtotal / 100).toFixed(2)}`;
+                document.getElementById('summary-fee').textContent = 
+                    `${currentCurrency}${(orderSummary.processingFee / 100).toFixed(2)}`;
+                document.getElementById('summary-total').textContent = 
+                    `${currentCurrency}${(orderSummary.total / 100).toFixed(2)}`;
+                document.getElementById('summary-currency').textContent = currentCurrency;
+
+                // Show exchange rate info
+                const rateDisplay = document.getElementById('exchange-rate-display');
+                if (orderSummary.exchangeRate !== 1) {
+                    rateDisplay.innerHTML = `
+                        Exchange Rate: 1 USD = ${orderSummary.exchangeRate.toFixed(4)} ${currentCurrency}
+                    `;
+                } else {
+                    rateDisplay.innerHTML = 'Base Currency: USD';
+                }
+            } catch (error) {
+                console.error('Error calculating totals:', error);
+                showToast('Error calculating order total');
+            }
+        }
+
+        // Currency change
+        document.getElementById('currency').addEventListener('change', (e) => {
+            currentCurrency = e.target.value;
+            updateTotals();
+        });
+
+        // Handle card errors
+        cardElement.addEventListener('change', (event) => {
+            const errors = document.getElementById('card-errors');
+            if (event.error) {
+                errors.textContent = event.error.message;
+            } else {
+                errors.textContent = '';
+            }
+        });
+
+        // Submit form
+        document.getElementById('submit-btn').addEventListener('click', async (e) => {
+            e.preventDefault();
+
+            if (!orderSummary) {
+                showToast('Error: Order summary not loaded');
+                return;
+            }
+
+            const btn = document.getElementById('submit-btn');
+            btn.disabled = true;
+            btn.textContent = 'Processing...';
+
+            try {
+                // Validate inputs
+                const email = document.getElementById('email').value;
+                const fullName = document.getElementById('fullName').value;
+                const phone = document.getElementById('phone').value;
+                const address = document.getElementById('address').value;
+                const city = document.getElementById('city').value;
+                const postal = document.getElementById('postal').value;
+                const country = document.getElementById('country').value;
+
+                if (!email || !fullName || !phone || !address || !city || !postal || !country) {
+                    throw new Error('Please fill in all required fields');
+                }
+
+                // Create payment intent
+                const intentResponse = await fetch('/api/checkout/create-payment-intent', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        amount: orderSummary.total / 100,
+                        currency: currentCurrency.toLowerCase(),
+                        email: email,
+                        metadata: {
+                            customerName: fullName,
+                            phone: phone,
+                            address: address,
+                            city: city,
+                            postal: postal,
+                            country: country
+                        }
+                    })
+                });
+
+                if (!intentResponse.ok) {
+                    const error = await intentResponse.json();
+                    throw new Error(error.error || 'Failed to create payment intent');
+                }
+
+                const { clientSecret } = await intentResponse.json();
+
+                // Confirm payment
+                const { paymentIntent, error } = await stripe.confirmCardPayment(clientSecret, {
+                    payment_method: {
+                        card: cardElement,
+                        billing_details: { name: fullName, email: email }
+                    }
+                });
+
+                if (error) {
+                    throw new Error(error.message);
+                }
+
+                // Confirm on server
+                const confirmResponse = await fetch('/api/checkout/confirm-payment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        paymentIntentId: paymentIntent.id
+                    })
+                });
+
+                if (!confirmResponse.ok) {
+                    throw new Error('Failed to confirm payment');
+                }
+
+                const confirmation = await confirmResponse.json();
+
+                if (confirmation.success) {
+                    // Show confirmation
+                    document.querySelector('form')?.style.display = 'none';
+                    const confDiv = document.getElementById('confirmation');
+                    confDiv.classList.remove('hidden');
+                    document.getElementById('conf-order-id').textContent = confirmation.orderId;
+                    document.getElementById('conf-amount').textContent = 
+                        `${confirmation.currency} ${confirmation.amount}`;
+                    document.getElementById('conf-email').textContent = confirmation.email;
+
+                    // Clear cart
+                    localStorage.removeItem('cartItems');
+                    showToast('Order completed successfully!');
+                } else {
+                    throw new Error(confirmation.error || 'Payment failed');
+                }
+            } catch (error) {
+                console.error('Payment error:', error);
+                showToast(`Error: ${error.message}`);
+                btn.disabled = false;
+                btn.textContent = 'Complete Purchase';
+            }
+        });
+
+        // Toast utility
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.opacity = '1';
+            toast.style.pointerEvents = 'auto';
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.pointerEvents = 'none';
+            }, 4000);
+        }
+
+        // Initialize
+        loadCart();
+    </script>
+</body>
+</html>

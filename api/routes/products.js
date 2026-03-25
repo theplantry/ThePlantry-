@@ -4,9 +4,12 @@ import { pool } from '../../server.js';
 const router = express.Router();
 
 const fallbackProducts = [
-  { id: 1, name: 'June Plum Juice', description: 'Cold-pressed gem', ingredients: 'Juniper plum, ginger, turmeric', image_url: '/assets/gallery/mothers-mylk.jpg', price: 1200, category: 'juices', available: true },
-  { id: 2, name: 'Ital Harvest Bowl', description: 'Hearty bowl', ingredients: 'Callaloo, quinoa, squash', image_url: '/assets/gallery/criss10.webp', price: 2500, category: 'meals', available: true },
-  { id: 3, name: 'Blue Mountain Grounds', description: 'Small-batch roast', ingredients: 'Arabica beans', image_url: '/assets/gallery/mothers-mylk.jpg', price: 4800, category: 'pantry', available: true },
+  { id: 1, name: 'Dreamwell Nightcap', description: 'Calming nighttime elixir for restorative sleep', ingredients: 'Passionflower, valerian, chamomile, lavender', image_url: '/assets/products/dreamwell-nightcap.jpg', price: 1800, category: 'wellness', available: true },
+  { id: 2, name: 'Harmony Hearty Brew', description: 'Warming herbal blend for balance and energy', ingredients: 'Ginger, turmeric, cinnamon, honey', image_url: '/assets/products/harmony-hearty-brew.jpg', price: 2200, category: 'wellness', available: true },
+  { id: 3, name: 'Power Pulse Bar', description: 'Energy-packed superfood bar', ingredients: 'Raw cacao, goji berries, hemp seeds, coconut', image_url: '/assets/products/power-pulse-bar.jpg', price: 1500, category: 'snacks', available: true },
+  { id: 4, name: 'Rise & Nourish Bowl', description: 'Nutrient-dense breakfast bowl', ingredients: 'Quinoa, berries, nuts, coconut yogurt', image_url: '/assets/products/rise-nourish-bowl.jpg', price: 2800, category: 'meals', available: true },
+  { id: 5, name: 'Vital Spark Elixir', description: 'Immunity-boosting tonic', ingredients: 'Turmeric, ginger, black pepper, coconut milk', image_url: '/assets/products/vital-spark-elixir.jpg', price: 2500, category: 'wellness', available: true },
+  { id: 6, name: 'Wellness Wave', description: 'Refreshing detox juice blend', ingredients: 'Apple, celery, ginger, lemon, spinach', image_url: '/assets/products/wellness-wave.jpg', price: 1900, category: 'juices', available: true },
 ];
 
 function filterFallbackProducts(category) {
