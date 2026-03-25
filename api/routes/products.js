@@ -4,9 +4,9 @@ import { pool } from '../../server.js';
 const router = express.Router();
 
 const fallbackProducts = [
-  { id: 1, name: 'June Plum Juice', description: 'Cold-pressed gem', ingredients: 'Juniper plum, ginger, turmeric', image_url: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&q=80&w=900', price: 1200, category: 'juices', available: true },
-  { id: 2, name: 'Ital Harvest Bowl', description: 'Hearty bowl', ingredients: 'Callaloo, quinoa, squash', image_url: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=900', price: 2500, category: 'meals', available: true },
-  { id: 3, name: 'Blue Mountain Grounds', description: 'Small-batch roast', ingredients: 'Arabica beans', image_url: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=900', price: 4800, category: 'pantry', available: true },
+  { id: 1, name: 'June Plum Juice', description: 'Cold-pressed gem', ingredients: 'Juniper plum, ginger, turmeric', image_url: '/assets/gallery/mothers-mylk.jpg', price: 1200, category: 'juices', available: true },
+  { id: 2, name: 'Ital Harvest Bowl', description: 'Hearty bowl', ingredients: 'Callaloo, quinoa, squash', image_url: '/assets/gallery/criss10.webp', price: 2500, category: 'meals', available: true },
+  { id: 3, name: 'Blue Mountain Grounds', description: 'Small-batch roast', ingredients: 'Arabica beans', image_url: '/assets/gallery/mothers-mylk.jpg', price: 4800, category: 'pantry', available: true },
 ];
 
 function filterFallbackProducts(category) {

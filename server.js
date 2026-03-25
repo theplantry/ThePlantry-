@@ -66,17 +66,17 @@ app.get('/api/gallery', (req, res) => {
   const galleryImages = [
     {
       id: 1,
-      name: 'Criss1',
-      description: 'Description',
-      imageUrl: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&q=80&w=900',
-      category: 'greens'
+      name: 'Mother\'s Mylk',
+      description: 'Jamaican dairy-alternative elixir',
+      imageUrl: '/assets/gallery/mothers-mylk.jpg',
+      category: 'wellness'
     },
     {
       id: 2,
-      name: 'Another',
-      description: 'Fresh botanical specimen',
-      imageUrl: 'https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?auto=format&fit=crop&q=80&w=900',
-      category: 'gallery'
+      name: 'Criss 10',
+      description: 'Vibrant botanical blend',
+      imageUrl: '/assets/gallery/criss10.webp',
+      category: 'greens'
     }
   ];
   res.json(galleryImages);
