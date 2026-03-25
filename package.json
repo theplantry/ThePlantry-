@@ -5,9 +5,12 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "start": "node start-server.js",
-    "dev": "nodemon start-server.js",
-    "seed": "node scripts/seed-db.js"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "seed": "node scripts/seed-db.js",
+    "legacy-dev": "nodemon start-server.js"
   },
   "keywords": [
     "plantry",
@@ -17,14 +20,26 @@
   "author": "The Plantry Team",
   "license": "ISC",
   "dependencies": {
+    "@prisma/client": "^7.5.0",
+    "@types/node": "^25.5.0",
+    "@types/react": "^19.2.14",
+    "autoprefixer": "^10.4.27",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.22.1",
     "jsonwebtoken": "^9.0.0",
+    "next": "^16.2.1",
+    "next-auth": "^4.24.13",
     "pg": "^8.8.0",
-    "stripe": "^12.0.0"
+    "postcss": "^8.5.8",
+    "prisma": "^7.5.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "stripe": "^12.0.0",
+    "tailwindcss": "^4.2.2",
+    "typescript": "^6.0.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.20"

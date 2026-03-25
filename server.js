@@ -19,7 +19,7 @@ const PORT = process.env.PORT || 5000;
 
 // Serve new multi-page index file at root
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index-mpa.html'));
+  res.sendFile(path.join(__dirname, 'public', 'index-mpa-wired.html'));
 });
 
 // Middleware
